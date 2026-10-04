@@ -1,0 +1,34 @@
+# InvariantAudio — Example Configuration File
+# Copy this file to config.yaml and adjust paths to your local environment.
+
+# Base Directories
+media_root: "/path/to/music"
+database_path: "/path/to/music_catalog.sqlite3"
+backup_root: "/path/to/backups"
+quarantine_root: "/path/to/quarantine"
+work_root: "/path/to/staging"
+
+# Locking & Safety
+mutation_lock_path: "/path/to/.invariant_audio.lock"
+batch_size_limit: 10
+enforce_payload_pcm_preservation: true
+enforce_source_continuity: true
+
+# Identification & Scoring
+musicbrainz:
+  rate_limit_seconds: 1.0
+  user_agent: "InvariantAudio/0.1.0 ( https://github.com/invariantaudio/invariantaudio )"
+  enable_acoustid_lookup: true
+  enable_acoustid_submission: false  # STRICTLY DISABLED FOR PRIVACY
+
+scoring:
+  min_auto_approval_score: 0.80
+  max_auto_approval_runner_up: 0.20
+  min_auto_approval_margin: 0.60
+  duration_tolerance_seconds: 3.0
+  min_acoustic_overlap_frames: 150
+
+# Media Server
+media_server:
+  type: "jellyfin" # or generic
+  structure_template: "{album_artist}/{album} [{year}]/{track_num:02d} - {title}.{ext}"

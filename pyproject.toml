@@ -1,0 +1,51 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "invariantaudio"
+version = "0.1.0a1"
+description = "A privacy-first, fail-closed music library identification, integrity, and remediation framework."
+readme = "README.md"
+authors = [
+    { name = "InvariantAudio Contributors" }
+]
+license = { text = "GPL-3.0-or-later" }
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: End Users/Desktop",
+    "Intended Audience :: System Administrators",
+    "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
+    "Topic :: Multimedia :: Sound/Audio",
+    "Topic :: System :: Archiving",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Operating System :: POSIX :: Linux",
+]
+keywords = ["music", "metadata", "musicbrainz", "audiophile", "integrity", "tagger", "safety", "fail-closed"]
+requires-python = ">=3.10"
+dependencies = [
+    "mutagen>=1.45.0",
+    "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
+    "flake8>=6.0",
+    "black>=23.0",
+    "mypy>=1.0",
+]
+
+[project.scripts]
+invariant-audio = "invariantaudio.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]

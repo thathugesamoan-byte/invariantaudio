@@ -1,0 +1,90 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+venv/
+.venv/
+ENV/
+env/
+
+# IDE and editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Testing and coverage
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+
+# Media and binary formats (MUST NEVER BE COMMITTED EXCEPT SYNTHETIC FIXTURES)
+*.mp3
+*.m4a
+*.flac
+*.wav
+*.aac
+*.ogg
+*.opus
+*.wma
+*.alac
+*.ape
+*.jpg
+*.jpeg
+*.png
+*.gif
+
+# Explicitly allow synthetic test fixtures
+!tests/fixtures/*.wav
+!tests/fixtures/*.mp3
+!tests/fixtures/*.m4a
+
+# Database files
+*.sqlite
+*.sqlite3
+*.db
+
+# Sensitive files & credentials
+.env
+.env.*
+credentials*
+secrets*
+tokens*
+*.pem
+*.key
+
+# Runtime working directories & logs
+/quarantine/
+/backups/
+/staging/
+/engineering-log/
+*.lock
