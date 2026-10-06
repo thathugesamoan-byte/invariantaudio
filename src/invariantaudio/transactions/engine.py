@@ -433,11 +433,16 @@ class TransactionEngine:
             if not verify_source_continuity(binding):
                 return False
             os.unlink(src)
-            _fsync_dir(os.path.dirname(src))
-            self._journal(tid, "COMPLETED")
-            return True
         except Exception:
             return False
+        # The source is gone; a failure to record that is repaired by recovery
+        # (source absent -> COMPLETED) and must not be reported as "retained".
+        try:
+            _fsync_dir(os.path.dirname(src))
+            self._journal(tid, "COMPLETED")
+        except Exception:
+            pass
+        return True
 
     # ------------------------------------------------------------------ tags
     def _write_metadata(self, path: Path, tags: Dict[str, Any]) -> None:
