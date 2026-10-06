@@ -1,4 +1,4 @@
-# Historical Deployment Record (Typhon)
+# Historical Deployment Record (Reference Deployment)
 
 > **Provenance and scope — read first.**
 > The figures below come from the operator's own records of a deployment of an **earlier, private implementation** of this approach on a personal music library. They are reported as **historical evidence only**.

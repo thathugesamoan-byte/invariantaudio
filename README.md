@@ -115,7 +115,7 @@ These classes come from string-matching `ffmpeg` warnings (see [docs/damaged-med
 ---
 
 ## 7. Historical deployment (not reproduced by this repository)
-An earlier, private implementation of this approach was used on a personal library of 2,003 tracks. Those figures are the operator's own historical records and **cannot be reproduced from this repository**, which ships synthetic fixtures only and a smaller feature set (no identification pipeline, no approval workflow). See [docs/case-study-typhon.md](docs/case-study-typhon.md) for what is and is not claimed.
+An earlier, private implementation of this approach was used on a personal library of 2,003 tracks. Those figures are the operator's own historical records and **cannot be reproduced from this repository**, which ships synthetic fixtures only and a smaller feature set (no identification pipeline, no approval workflow). See [docs/case-study-reference-deployment.md](docs/case-study-reference-deployment.md) for what is and is not claimed.
 
 ---
 
