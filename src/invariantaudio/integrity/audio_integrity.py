@@ -5,10 +5,9 @@ Extracts compressed audio payloads and decoded PCM sample stream hashes.
 """
 
 import hashlib
-import os
 import subprocess
 from pathlib import Path
-from typing import Dict, Any, Tuple
+from typing import Tuple
 
 def compute_file_sha256(path: str | Path) -> str:
     """Compute the whole-file SHA-256 hash."""
@@ -58,6 +57,7 @@ def compute_decoded_pcm_sha256(path: str | Path) -> str:
     h = hashlib.sha256()
     try:
         proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        assert proc.stdout is not None
         while chunk := proc.stdout.read(65536):
             h.update(chunk)
         _, stderr = proc.communicate()

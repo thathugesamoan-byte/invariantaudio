@@ -1,17 +1,13 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 import pytest
-import sys
-import os
 import math
 import struct
 import subprocess
 import wave
 from pathlib import Path
 
-# Add src to sys.path
-SRC_DIR = Path(__file__).resolve().parent.parent / "src"
-sys.path.insert(0, str(SRC_DIR))
-
+# The package must be installed (``pip install -e .`` or a built wheel); tests never
+# import it from the source tree implicitly.
 FIXTURES_DIR = Path(__file__).resolve().parent / "fixtures"
 
 @pytest.fixture(scope="session", autouse=True)
@@ -62,3 +58,49 @@ def ensure_fixtures_exist():
         bad = FIXTURES_DIR / "corrupt_header.mp3"
         if not bad.exists():
             bad.write_bytes(b"ID3\x03\x00\x00\x00\x00\x00\x10INVALID_CORRUPT_BYTES\x00\x00")
+
+
+# --------------------------------------------------------------------------
+# Shared helpers for transaction tests
+# --------------------------------------------------------------------------
+import shutil
+import sqlite3
+from types import SimpleNamespace
+
+from helpers import sha256_of
+from invariantaudio.recovery.recovery_manager import init_database
+from invariantaudio.transactions.engine import TransactionEngine
+
+
+@pytest.fixture(scope="session")
+def alt_mp3(tmp_path_factory):
+    """A second, different, valid mp3 (used to simulate source replacement)."""
+    out = tmp_path_factory.mktemp("alt") / "alt.mp3"
+    subprocess.run(
+        ["ffmpeg", "-y", "-v", "error", "-i", str(FIXTURES_DIR / "sine_880hz_2s.wav"),
+         "-c:a", "libmp3lame", "-b:a", "128k", str(out)],
+        check=True,
+    )
+    return out
+
+
+@pytest.fixture
+def lib(tmp_path):
+    """A scratch library: media dir, db, roots, one mp3 source, an engine."""
+    conn = sqlite3.connect(tmp_path / "catalog.sqlite3")
+    init_database(conn)
+    media = tmp_path / "media"
+    media.mkdir()
+    src = media / "raw_track.mp3"
+    shutil.copy2(FIXTURES_DIR / "synthetic_test_track.mp3", src)
+    ns = SimpleNamespace(
+        tmp=tmp_path, conn=conn, media=media, src=src,
+        backup=tmp_path / "backups", staging=tmp_path / "staging", lock=tmp_path / "mutation.lock",
+        src_sha=sha256_of(src),
+        target=media / "Artist" / "Album" / "01 - Song.mp3",
+    )
+    ns.engine = TransactionEngine(conn, ns.backup, ns.staging, ns.lock, media_root=media)
+    ns.proposal = lambda **kw: {"source_path": str(kw.get("src", ns.src)), "target_path": str(kw.get("tgt", ns.target)),
+                                "tags": kw.get("tags", {"title": "Song", "artist": "Artist", "album": "Album"})}
+    yield ns
+    conn.close()

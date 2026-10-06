@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 """
-Advisory POSIX File Locking Implementation.
-Enforces the Parent-Only Mutation Invariant.
+Advisory POSIX file lock (flock). Coordinates cooperating InvariantAudio
+processes only; other programs are not prevented from touching files.
 """
 
 import os
