@@ -1,6 +1,6 @@
 # Third-Party Licenses & Software Notices
 
-InvariantAudio interacts with several third-party libraries, standalone tools, and external services. This document outlines their licensing and distribution relationships.
+InvariantAudio depends on third-party libraries and standalone tools, and plans (but does not yet contain) integrations with external services. This document outlines their licensing and distribution relationships.
 
 ---
 
@@ -30,7 +30,7 @@ InvariantAudio interacts with several third-party libraries, standalone tools, a
 
 ### Chromaprint / fpcalc
 * **Upstream Project**: [Chromaprint](https://acoustid.org/chromaprint)
-* **Relationship**: `EXTERNAL_EXECUTABLE` (Invoked purely via CLI subprocess: `subprocess.run(["fpcalc", ...])`).
+* **Relationship**: `EXTERNAL_EXECUTABLE` (optional; invoked via CLI subprocess by `discovery.compute_acoustic_fingerprint`, which no command or test calls in v0.1.0-alpha).
 * **License**: LGPL v2.1+ / MIT.
 * **Redistribution**: InvariantAudio does NOT bundle or distribute `fpcalc` binaries.
 
@@ -46,11 +46,13 @@ InvariantAudio interacts with several third-party libraries, standalone tools, a
 
 ## 4. External Network Metadata Services
 
+> **Neither service below is contacted by v0.1.0-alpha.** The package contains no network code. These entries describe planned integrations.
+
 ### MusicBrainz
-* **Relationship**: `EXTERNAL_NETWORK_SERVICE` (Read-only HTTPS GET metadata lookups).
+* **Relationship**: `PLANNED_EXTERNAL_NETWORK_SERVICE` (not used in this release).
 * **Data License**: Core metadata is in the Public Domain (Creative Commons CC0).
 * **Note**: InvariantAudio is an independent client and is not endorsed by or affiliated with the MetaBrainz Foundation.
 
 ### AcoustID
-* **Relationship**: `EXTERNAL_NETWORK_SERVICE` (Read-only acoustic fingerprint lookups).
-* **Note**: AcoustID fingerprint submissions are strictly disabled in InvariantAudio to preserve user privacy.
+* **Relationship**: `PLANNED_EXTERNAL_NETWORK_SERVICE` (not used in this release).
+* **Note**: fingerprint submission is prohibited by project policy (`enable_acoustid_submission: true` is rejected by the configuration parser).

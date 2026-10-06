@@ -3,8 +3,6 @@
 Live Veto & Version Gate.
 """
 
-from typing import Set
-
 VETO_KEYWORDS = {"live", "remix", "tribute", "cover", "acoustic", "karaoke", "instrumental"}
 
 def check_version_veto(source_title: str, candidate_title: str) -> bool:

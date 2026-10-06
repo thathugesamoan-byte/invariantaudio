@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 """
-Cryptographic Review Packet Generation & Validation.
+Manifest hashing (canonical-JSON SHA-256, an integrity digest, not a signature)
+and synthetic-identifier rejection. No approval workflow is built on these yet.
 """
 
 import hashlib

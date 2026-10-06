@@ -1,6 +1,5 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 import pytest
-from pathlib import Path
 from invariantaudio.transactions.lock import MutationLock
 
 def test_lock_acquire_and_release(tmp_path):

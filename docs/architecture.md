@@ -1,6 +1,14 @@
-# InvariantAudio: System Architecture & Component Model
+# Architecture (v0.1.0-alpha)
 
-The system follows an asymmetric pipeline design:
-- **Upstream (Discovery & Identification)**: Read-only, highly parallelizable, local-first. Extracts acoustic fingerprints via `fpcalc`, parses container tags via `mutagen`, queries MusicBrainz, and scores candidates.
-- **Midstream (Veto & Decision Gateway)**: Evaluates candidates against duration gates, score margins, and live-veto rules. Partitions candidates into `AUTO_HIGH` or `HUMAN_V6`.
-- **Downstream (Transactional Mutation Engine)**: Strictly sequential, single-process, fail-closed. Acquires exclusive `flock`, verifies source continuity, creates pre-move backups, writes tags in staging, validates bit-exact payload/PCM hashes, performs atomic `os.replace`, and commits SQLite transactions.
+## Implemented
+- **Inspection (read-only):** `discovery.scan_directory_for_audio`, `integrity.inspect_stream_health`, `reporting.verify_master_balance`.
+- **Mutation:** `transactions.TransactionEngine` (journaled tag-write + relocate), `recovery` (schema, journal states, recovery), `quarantine.isolate_to_quarantine`.
+- **Supporting pieces:** `transactions.source_continuity`, `transactions.lock`, `config`, `fsutil`.
+
+The mutation engine is strictly sequential and single-process, takes an exclusive lock, and follows the order described in [transaction-model.md](transaction-model.md).
+
+## Library building blocks that are not connected to a workflow
+`evidence.scorer` (composite score and gates), `duplicates.veto` (title keyword comparison), `approvals.manifests` (canonical-JSON SHA-256 and synthetic-ID rejection), `identification.matcher.sanitize_search_query` (filename cleanup helper), and `discovery.compute_acoustic_fingerprint` (`fpcalc` wrapper). Nothing calls them in v0.1.0-alpha.
+
+## Planned (not present)
+Identification against MusicBrainz/AcoustID, candidate decisioning, approval workflows, and CLI commands that drive the engine. See [ROADMAP.md](../ROADMAP.md).

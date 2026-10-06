@@ -1,0 +1,5 @@
+[flake8]
+# Correctness checks only (pyflakes + syntax errors); no style enforcement.
+select = F,E9
+per-file-ignores =
+    __init__.py:F401,F403

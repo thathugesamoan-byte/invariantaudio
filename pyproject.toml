@@ -1,21 +1,21 @@
 [build-system]
-requires = ["setuptools>=61.0", "wheel"]
+requires = ["setuptools>=77.0.3", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "invariantaudio"
 version = "0.1.0a1"
-description = "A privacy-first, fail-closed music library identification, integrity, and remediation framework."
+description = "A privacy-first, fail-closed toolkit for verifying music-library integrity and applying journaled, hash-verified metadata changes."
 readme = "README.md"
 authors = [
     { name = "InvariantAudio Contributors" }
 ]
-license = { text = "GPL-3.0-or-later" }
+license = "GPL-3.0-or-later"
+license-files = ["LICENSE"]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: End Users/Desktop",
     "Intended Audience :: System Administrators",
-    "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
     "Topic :: Multimedia :: Sound/Audio",
     "Topic :: System :: Archiving",
     "Programming Language :: Python :: 3",
@@ -24,7 +24,7 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
     "Operating System :: POSIX :: Linux",
 ]
-keywords = ["music", "metadata", "musicbrainz", "audiophile", "integrity", "tagger", "safety", "fail-closed"]
+keywords = ["music", "metadata", "audio", "audiophile", "integrity", "tagger", "safety", "fail-closed"]
 requires-python = ">=3.10"
 dependencies = [
     "mutagen>=1.45.0",
@@ -40,11 +40,19 @@ dev = [
     "mypy>=1.0",
 ]
 
+[project.urls]
+Homepage = "https://github.com/thathugesamoan-byte/invariantaudio"
+Issues = "https://github.com/thathugesamoan-byte/invariantaudio/issues"
+Changelog = "https://github.com/thathugesamoan-byte/invariantaudio/blob/main/CHANGELOG.md"
+
 [project.scripts]
 invariant-audio = "invariantaudio.cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.mypy]
+ignore_missing_imports = true
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

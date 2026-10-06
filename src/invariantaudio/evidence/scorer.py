@@ -3,8 +3,6 @@
 Multi-Vector Candidate Scorer with strict margin and duration gates.
 """
 
-from typing import Dict, Any, Tuple
-
 def calculate_composite_score(
     acoustic_sim: float,
     title_sim: float,

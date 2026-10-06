@@ -1,5 +1,4 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
-import pytest
 import shutil
 from pathlib import Path
 from invariantaudio.integrity.audio_integrity import (
