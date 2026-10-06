@@ -2,7 +2,7 @@
 
 All notable changes to this project are documented here. Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versioning: [Semantic Versioning](https://semver.org/spec/v2.0.0.html); the Python package version `0.1.0a1` is the PEP 440 form of `0.1.0-alpha`.
 
-## [0.1.0-alpha] - Unreleased
+## [0.1.0-alpha] - 2026-10-05
 ### Added
 - `invariantaudio` package and `invariant-audio` CLI: `init-db`, `scan`, `verify`, `audit`, `recover`.
 - `TransactionEngine`: journaled tag-write + relocate for `.mp3`/`.m4a` with payload and decoded-PCM verification, source-continuity revalidation, pre-move backups, same-filesystem staging and post-commit source retirement.
