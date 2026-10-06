@@ -1,12 +1,11 @@
-# Local-First Privacy & Controlled Egress Architecture
+# Privacy
 
-## 1. Core Privacy Principles
-1. **Local-First Processing**: 100% of audio decoding, acoustic fingerprinting (`fpcalc`), tag parsing (`mutagen`), and stream verification (`ffmpeg`) execute locally on your machine.
-2. **Zero Raw Audio Egress**: Under no circumstances does InvariantAudio upload raw audio files, audio samples, or decoded PCM streams to any remote service.
-3. **No Mandatory Accounts**: No registration, cloud accounts, API keys, or OAuth authentication tokens are required for core local operations.
-4. **No Telemetry**: InvariantAudio contains zero analytics, tracking beacons, or telemetry daemons.
+InvariantAudio v0.1.0-alpha is local-only software.
 
-## 2. Controlled External Metadata Lookups
-When external identification is enabled, InvariantAudio performs strictly controlled, read-only queries:
-- **MusicBrainz**: Used for read-only metadata lookups via public HTTPS GET requests. Queries are sanitized to remove local file paths, hostnames, usernames, and IP addresses. Synchronous 1.0s rate limiting and an identified User-Agent header are enforced.
-- **AcoustID**: Used strictly read-only to map local Chromaprint fingerprints to Recording MBIDs. **AcoustID fingerprint submission is strictly disabled.**
+- **No network access.** The package contains no network client code; a test asserts it imports no networking modules. It does not contact MusicBrainz, AcoustID, or any other service.
+- **No telemetry, analytics, accounts, API keys or tokens.**
+- **No audio, fingerprint or metadata leaves your machine.** `ffmpeg` and (optionally) `fpcalc` run locally.
+- **What is stored locally:** a SQLite catalog containing local file paths, SHA-256 hashes, verification status and a transaction journal; backup copies of files the engine modifies; and staging copies while a transaction runs. Treat the database and backup directory as sensitive as the library itself.
+- **Not covered:** the operating system, your filesystem and backup tooling, and the third-party programs you install (`ffmpeg`, `fpcalc`) are outside this project's control.
+
+External metadata lookups are **planned, not implemented**. The constraints any future lookup must satisfy are listed in [docs/privacy-model.md](docs/privacy-model.md).

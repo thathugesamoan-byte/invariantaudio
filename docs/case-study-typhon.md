@@ -1,40 +1,34 @@
-# Real-World Case Study: The Typhon Deployment
+# Historical Deployment Record (Typhon)
 
-**Status**: Verified Historical Deployment Benchmark  
-**Scope**: Full cleanup, audit, and remediation of a 2,003-track personal music library.
+> **Provenance and scope — read first.**
+> The figures below come from the operator's own records of a deployment of an **earlier, private implementation** of this approach on a personal music library. They are reported as **historical evidence only**.
+> - They are **not reproduced by this repository** and cannot be re-derived from it: the library, its database and its logs are private and are not published, and this release ships synthetic test fixtures only.
+> - The earlier implementation had an identification pipeline (fingerprint lookup, scoring, automatic and human approval phases) that **does not exist in v0.1.0-alpha** (see the README table and [ROADMAP.md](../ROADMAP.md)).
+> - No claim is made that v0.1.0-alpha would have produced these results, or that it is "production-proven". What the public suite demonstrates is limited to the synthetic tests in `tests/`.
 
----
+## 1. Context
+A personal collection of roughly 2,000 audio files (MP3, M4A, FLAC) on a dedicated Linux server, with inconsistent tags, fragmented folders, duplicates and unindexed files.
 
-## 1. Baseline & Starting Inventory
-The deployment targeted a heterogeneous personal music collection hosted on a dedicated Linux server ("Typhon").
-- **Initial Inventory**: Over 2,000 physical audio files (MP3, MP4/M4A, FLAC).
-- **Initial State**: Pervasive ID3 tag corruption, missing track numbers, fragmented album directories, duplicate downloads, and unindexed loose files.
+## 2. Phases as reported by the operator (earlier tooling)
+1. **Automatic phase:** 688 tracks that met the score gates (top ≥ 0.80, runner-up ≤ 0.20, margin ≥ 0.60) were applied in 69 small batches; the operator reports no false positives.
+2. **Human adjudication and duplicates:** 424 tracks reviewed across 8 review sets; 50 duplicate/version cases resolved (3 bit-identical duplicates removed, 46 legitimate versions tagged).
+3. **Holdouts:** 225 tracks resolved through further review packets.
+4. **Census:** a final `ffmpeg` decode census of 190 files classified 159 as `DAMAGED_BUT_PLAYABLE`, deferred 1 exception, and isolated 30 non-canonical files with backups.
 
----
+Duplicate deletion, review packets and the automatic/human phases above are **not** features of this release.
 
-## 2. Execution Phases & Methodology
-1. **Phase A (Autonomous Rollout)**: 688 tracks meeting strict mathematical score margins ($S_1 \ge 0.80, S_2 \le 0.20, \Delta S \ge 0.60$) were committed autonomously under `AUTO_APPROVAL_HIGH_V2.0` across 69 small batches with zero false positives.
-2. **Phases B & C (Human Adjudication & Deduplication)**: 424 tracks were human-adjudicated across 8 review sets. 50 duplicate/version cases were resolved (safely deleting 3 bit-identical physical duplicates and tagging 46 legitimate versions).
-3. **Phases D-1 to D-4 (Holdouts)**: 225 complex holdout tracks were resolved through multi-stage review packets.
-4. **Phase D-5 (Census & Damaged Media)**: A forensic ffmpeg stream census of the final 190 files categorized 159 playable tracks under `DAMAGED_BUT_PLAYABLE` (100% native bitstream preserved), deferred 1 structural exception (`Track ID 60`), and isolated 30 non-canonical files into `quarantine/` with dual-copy backups.
+## 3. Reported historical metrics (operator records, unverified here)
 
----
+| Category | Count |
+|---|---:|
+| Tracks in the final catalog | 2,003 |
+| `TRUSTED` | 1,843 |
+| `DAMAGED_BUT_PLAYABLE` | 159 |
+| `INTEGRITY_EXCEPTION` (deferred) | 1 |
+| Unindexed files on disk at end | 0 |
+| Committed transactions | 1,952 |
+| — human-approved | 1,243 |
+| — automatically approved | 688 |
+| Quarantined files / backups | 30 / 30 |
 
-## 3. Measured Historical Production Metrics
-
-$$\text{DB\_TRACKS}\;(2,003) + \text{UNINDEXED\_FILES}\;(0) = \text{PHYSICAL\_MEDIA\_FILES}\;(2,003)\quad \mathbf{[PERFECTLY\ BALANCED]}$$
-
-| Category | Metric Count | Percentage |
-| :--- | :---: | :---: |
-| **Total Canonical Production Tracks** | **`2,003`** | 100.00% |
-| • `TRUSTED` (Pristine, 100% loss-free) | `1,843` | 92.01% |
-| • `DAMAGED_BUT_PLAYABLE` (Native bitstream preserved) | `159` | 7.94% |
-| • `INTEGRITY_EXCEPTION` (`Track ID 60`, deferred) | `1` | 0.05% |
-| **Unindexed Loose Files on Disk** | **`0`** | 0.00% |
-| **Committed Production Transactions** | **`1,952`** | — |
-| • Human-Approved Imports (`HUMAN_APPROVED_IMPORT_V6`) | `1,243` | 63.68% |
-| • Auto-Approved Proposals (`AUTO_APPROVAL_HIGH_V2.0`) | `688` | 35.25% |
-| **Active Synthetic Identifiers (`b1b1c1d1-*`)** | **`0`** | 0.00% |
-| **Quarantined Exception Files Preserved** | **`30`** | — |
-| **Authoritative Dual Pre-Move Backups** | **`30`** | — |
-| **Measured Audio Payload & PCM Preservation Rate** | **`100.0%`** | — |
+The operator reports that payload and PCM hashes matched in every committed transaction. In this repository the equivalent check is an enforced precondition of each transaction ([safety-model.md](safety-model.md)), tested on synthetic files.

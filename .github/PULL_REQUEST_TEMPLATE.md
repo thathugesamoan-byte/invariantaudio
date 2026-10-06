@@ -9,6 +9,7 @@ Briefly describe the purpose of this PR and what issues it fixes.
 
 ## Verification & Testing
 - [ ] All unit and integration tests pass (`pytest`)
-- [ ] Tested with synthetic audio fixtures
+- [ ] Tested with synthetic audio fixtures only (no real media, databases or config files committed)
 - [ ] Verified that payload/PCM preservation invariants hold
+- [ ] Documentation claims match what the code enforces and the tests cover
 - [ ] Signed off with DCO (`git commit -s`)

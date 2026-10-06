@@ -26,7 +26,23 @@ jobs:
           cache-dependency-path: pyproject.toml
       - name: Install ffmpeg and Chromaprint
         run: sudo apt-get update && sudo apt-get install -y --no-install-recommends ffmpeg libchromaprint-tools
-      - name: Install the package and pytest
-        run: python -m pip install -e . pytest
+      - name: Install the package with dev tools
+        run: python -m pip install -e ".[dev]"
+      - name: Lint (pyflakes-class errors)
+        run: python -m flake8 src tests
+      - name: Type check
+        run: python -m mypy src
       - name: Run tests
         run: python -m pytest -q
+      - name: Build, install the wheel into a clean venv, smoke-test and run the tests against it
+        if: matrix.python-version == '3.12'
+        run: |
+          python -m pip install build
+          python -m build
+          python -m venv /tmp/wheelenv
+          /tmp/wheelenv/bin/pip install dist/*.whl pytest
+          mkdir /tmp/suite && cp -r tests config.example.yaml /tmp/suite/
+          cd /tmp/suite
+          /tmp/wheelenv/bin/invariant-audio verify tests/fixtures/synthetic_test_track.mp3
+          /tmp/wheelenv/bin/python -c "import invariantaudio, sys; print(invariantaudio.__file__); assert '/tmp/wheelenv' in invariantaudio.__file__"
+          /tmp/wheelenv/bin/python -m pytest -q

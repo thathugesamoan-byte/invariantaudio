@@ -82,9 +82,17 @@ tokens*
 *.pem
 *.key
 
+# Local configuration (contains machine-specific paths)
+config.yaml
+config.yml
+
+# Type-checker and build output
+.mypy_cache/
+
 # Runtime working directories & logs
 /quarantine/
 /backups/
 /staging/
-/engineering-log/
 *.lock
+*.log
+.invariantaudio-example/

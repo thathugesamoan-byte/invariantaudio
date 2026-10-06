@@ -1,14 +1,22 @@
 # Security Policy
 
-## Reporting a Vulnerability
-We take the security, privacy, and integrity of media libraries very seriously. If you discover a security vulnerability, Time-Of-Check to Time-Of-Use (TOCTOU) race condition, or potential data corruption bug, please report it responsibly.
+## Reporting a vulnerability
+Report suspected vulnerabilities, data-loss bugs, or race conditions privately through GitHub Security Advisories on this repository. Do not open a public issue for them.
 
-Please DO NOT create a public issue for sensitive security vulnerabilities. Instead, report security advisories privately via GitHub Security Advisories.
+## Status
+InvariantAudio is **alpha** software. Test it on copies. It has not had an independent security review.
 
-## Security Architecture & Implemented Invariants
-InvariantAudio is engineered around a **fail-closed, transactional safety model**:
-1. **Advisory File Locking (`flock`)**: All mutating operations acquire an exclusive lock on `.invariant_audio.lock` to prevent concurrency races.
-2. **Parent-Only Mutation Invariant**: Child worker subprocesses are restricted to read-only inspection; all file writes and database updates are performed directly by the parent process.
-3. **Source Continuity Tuple Verification**: Files are bound to their device (`st_dev`), inode (`st_ino`), link count (`st_nlink`), size, and SHA-256 hash to prevent symlink or hardlink substitution attacks.
-4. **Bit-Exact Audio Preservation**: Audio payloads and decoded PCM sample streams must match bit-for-bit before and after metadata writes.
-5. **Fail-Closed Execution**: Any discrepancy, unhandled exception, or hash mismatch halts execution immediately and rolls back staged files.
+## What the code enforces (tested)
+- Existing destination files are never overwritten by the mutation engine or quarantine.
+- The original file is removed only after the database commit and only if it is unchanged since it was bound (`st_dev`, `st_ino`, `st_nlink`, size, SHA-256; symlinks rejected).
+- Tag writes are accepted only if compressed-payload and normalized decoded-PCM hashes are unchanged (scope and limits in [docs/safety-model.md](docs/safety-model.md)).
+- Every transaction step is journaled; interrupted transactions are resolved deterministically by `recover` ([docs/recovery.md](docs/recovery.md)).
+- Configuration is strictly typed; invalid or safety-disabling values abort.
+- The package has no network code.
+
+## What it does not protect against
+- A privileged local attacker, other processes writing into the library, or a compromised `ffmpeg`.
+- Advisory-lock bypass by programs that do not take the lock.
+- Changes made in the short interval between the last continuity check and the source removal (the original bytes remain in the backup).
+- Power-loss corruption (durability depends on hardware and mount options; not tested).
+- Anything about the privacy or security of services not yet integrated (MusicBrainz/AcoustID are planned, not implemented).

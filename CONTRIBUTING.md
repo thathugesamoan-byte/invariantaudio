@@ -15,16 +15,20 @@ By making a contribution to this project, I certify that:
 ```
 
 ## Core Architectural Invariants
-Any contribution modifying core engine logic must uphold our **Four Non-Negotiable Invariants**:
-1. **Never transcode or clip audio**: Metadata tagging must preserve 100% bit-exact compressed audio payloads and decoded PCM sample streams.
-2. **Fail-closed transactional safety**: Any error or discrepancy must abort and roll back immediately.
-3. **Parent-only mutation ownership**: Consequential disk and database mutations must be executed directly by the single lock-owning process.
-4. **Local-first privacy**: No audio uploads, telemetry, or un-sanitized external queries.
+Contributions that touch the mutation engine must preserve (and test) these invariants; see [docs/safety-model.md](docs/safety-model.md):
+1. **Never transcode or clip audio**: tag writes must keep the compressed-payload and decoded-PCM hashes identical.
+2. **Fail closed**: any error or discrepancy aborts and rolls back via the journal; never add a silent fallback.
+3. **Never overwrite** an existing destination, backup or quarantine file; the original is removed only after the database commit.
+4. **Local-first privacy**: no audio uploads, telemetry or un-sanitized external queries. Adding any network code requires updating `tests/unit/test_no_network_code.py`, `PRIVACY.md` and `docs/privacy-model.md` in the same change.
+5. **No unqualified claims**: documentation may only state guarantees the code enforces and tests cover.
 
 ## Development Workflow
 ```bash
 git clone https://github.com/thathugesamoan-byte/invariantaudio.git
 cd invariantaudio
-pip install -e ".[dev]"
-pytest
+python -m venv .venv && . .venv/bin/activate
+pip install -e ".[dev]"          # also requires ffmpeg on PATH
+python -m pytest
+flake8 src tests && mypy src
 ```
+Tests use synthetic fixtures only. Never commit real media, databases, configuration files or logs.

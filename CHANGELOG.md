@@ -1,22 +1,20 @@
 # Changelog
 
-All notable changes to this project will be documented in this file.
+All notable changes to this project are documented here. Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versioning: [Semantic Versioning](https://semver.org/spec/v2.0.0.html); the Python package version `0.1.0a1` is the PEP 440 form of `0.1.0-alpha`.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
-
-## [0.1.0-alpha] - 2026-08-16
+## [0.1.0-alpha] - Unreleased
 ### Added
-- Initial public open-source release candidate of **InvariantAudio**.
-- Modular Python architecture (`invariantaudio` package).
-- Read-only default execution mode with CLI entrypoint `invariant-audio`.
-- Single-process POSIX `flock` mutation lock manager (`MutationLock`).
-- Source continuity verification tuple (`st_dev`, `st_ino`, `st_nlink`, size, SHA-256) and symlink rejection.
-- Bit-exact audio payload and decoded PCM sample stream verification invariants.
-- Multi-vector candidate identification scorer (Acoustic, Title, Artist, Album, Duration).
-- Dual-approval decision governance (`AUTO_HIGH` and `HUMAN_V6` cryptographic manifests).
-- Three-tier status classification (`TRUSTED`, `DAMAGED_BUT_PLAYABLE`, `INTEGRITY_EXCEPTION`).
-- Safe quarantine isolation workflow with dual-copy backups.
-- Comprehensive synthetic test fixture generator and regression suite.
-- Generic YAML configuration system.
-- Released under GNU General Public License v3.0 or later (GPL-3.0-or-later).
+- `invariantaudio` package and `invariant-audio` CLI: `init-db`, `scan`, `verify`, `audit`, `recover`.
+- `TransactionEngine`: journaled tag-write + relocate for `.mp3`/`.m4a` with payload and decoded-PCM verification, source-continuity revalidation, pre-move backups, same-filesystem staging and post-commit source retirement.
+- Transaction journal (`production_transactions`, schema v7) and deterministic recovery of interrupted transactions.
+- Target collision policy (`classify_target`): refuses existing different, identical, aliased, symlinked and Unicode/case-equivalent destinations.
+- Source-continuity binding over `(st_dev, st_ino, st_nlink, size, SHA-256)`, opened with `O_NOFOLLOW`.
+- Quarantine with collision-safe backup and quarantine names (Python API).
+- Strict configuration parser (no type coercion, unknown keys rejected, safety flags cannot be disabled).
+- Path-level library audit.
+- Scoring, version-keyword veto, manifest-hash and synthetic-ID helper functions (not wired into a workflow).
+- Complete GNU GPL v3 text in `LICENSE`; `GPL-3.0-or-later` as the license expression.
+- CI: tests on Python 3.10–3.12, `pyflakes`-class lint, `mypy`, and a full-history `gitleaks` scan.
+
+### Not included (planned)
+MusicBrainz/AcoustID access, the identification pipeline, approval workflows, CLI commands for applying batches or quarantining, deduplication. See [ROADMAP.md](ROADMAP.md).
